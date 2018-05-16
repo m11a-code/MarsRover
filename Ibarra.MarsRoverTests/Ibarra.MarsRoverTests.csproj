@@ -61,6 +61,9 @@
     <Compile Include="Commands\DeploymentZoneChartCommandTests.cs" />
     <Compile Include="Commands\ExploreCommandTests.cs" />
     <Compile Include="Commands\Parser\CommandParserTests.cs" />
+    <Compile Include="ExplorationVehicles\ExplorerTests.cs" />
+    <Compile Include="ExplorationVehicles\RoverTests.cs" />
+    <Compile Include="Navigation\PositionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -72,9 +75,7 @@
       <Name>Ibarra.MarsRover</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ExplorationVehicles\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

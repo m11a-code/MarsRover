@@ -15,6 +15,7 @@ namespace Ibarra.MarsRover.Commands {
         public void SetDeploymentZoneChart(IDeploymentZoneChart deploymentZone) =>
             _associatedDeploymentZoneChart = deploymentZone;
 
+        /// <inheritdoc />
         public void Execute() {
             if (_associatedDeploymentZoneChart != null) {
                 _associatedDeploymentZoneChart.Size = Size;

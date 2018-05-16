@@ -4,33 +4,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ibarra.MarsRover.ExplorationVehicles
-{
+namespace Ibarra.MarsRover.ExplorationVehicles {
     public class Rover : Explorer {
         private readonly IDictionary<Movement, Action> _roverMovementActions;
         private readonly IDictionary<Heading, Action> _roverRotateLeftActions;
         private readonly IDictionary<Heading, Action> _roverRotateRightActions;
         private readonly IDictionary<Heading, Action> _roverMoveForwardActions;
 
+        /// <inheritdoc />
         public override void Move(IEnumerable<Movement> movements) {
             foreach (var movement in movements) {
                 _roverMovementActions[movement].Invoke();
             }
         }
 
+        /// <inheritdoc />
         protected override bool IsPositionValid(Position position) =>
             position.X > -1 && position.Y > -1 &&
             position.X <= DeploymentZoneChart.Size.Width &&
             position.Y <= DeploymentZoneChart.Size.Height;
 
+        /// <inheritdoc />
         protected override bool ExplorerExistsAtPosition(Position position) {
             return ExplorationUnit.ToList().FindIndex(explorer =>
                        explorer != this && explorer.Position.X == position.X && explorer.Position.Y == position.Y) !=
                    -1;
         }
 
-        public Rover(IDeploymentZoneChart deploymentZoneChart, ExplorationUnit crew) :
-            base(deploymentZoneChart, crew) {
+        /// <summary>
+        /// A specific kind of explorer that can navigate around many different deployment zones that humans otherwise 
+        /// could not.
+        /// </summary>
+        /// <param name="crew">The team this rover is assigned to.</param>
+        public Rover(ExplorationTeam crew) :
+            base(crew) {
             _roverMovementActions = new Dictionary<Movement, Action> {
                 {Movement.Left, () => _roverRotateLeftActions[Heading].Invoke()},
                 {Movement.Right, () => _roverRotateRightActions[Heading].Invoke()},

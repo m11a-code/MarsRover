@@ -1,6 +1,9 @@
 ﻿using System;
 
 namespace Ibarra.MarsRover.Navigation {
+    /// <summary>
+    /// Represents the provided coordinate values.
+    /// </summary>
     public class Position {
         public Position(int x, int y) {
             if (!ValidateX(x)) {

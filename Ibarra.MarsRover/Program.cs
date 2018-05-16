@@ -11,20 +11,29 @@ namespace Ibarra.MarsRover {
     class Program {
         static void Main(string[] args) {
             switch (args.Length) {
-                // I can either take a file and parse that for the commands or take console input directly.
+                // Can only accept user input directly from command line right now.
+                // TODO: Add text file input and help menu output.
                 case 0:
-                    DirectCommandLineInput();
-                    break;
-                case 1 when IsHelpCommandInput(args[0]):
-                    OutputHelpInformation();
-                    break;
-                case 1:
-                    // FileCommandLineInput();
-                    Console.WriteLine(
-                        "Reading input from a file is not currently supported. Type --help for help menu.");
+                    while (true) {
+                        try {
+                            DirectCommandLineInput();
+                            break;
+                        } catch (Exception e) {
+                            Console.WriteLine(e);
+                            Console.WriteLine("Exception occurred. \'Rebooting\' command module...");
+                            Console.WriteLine("...");
+                            Console.WriteLine("...");
+                            Console.WriteLine("...");
+                            Console.WriteLine("Reboot complete!");
+                        }
+                    }
+
                     break;
                 default:
-                    Console.WriteLine("Invalid input type found. Type --help for help menu.");
+                    Console.WriteLine(
+                        "Invalid input type found; only direct command line input of commands is accepted right now.");
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadLine();
                     break;
             }
         }
@@ -47,8 +56,14 @@ namespace Ibarra.MarsRover {
                     continue;
                 }
 
-                deploymentZone = new Plateau(deploymentZoneChartCommand.Size);
+                // Right now, only supporting one type of deployment zone: Plateau.
+                // Definitely room for improvement here to make it more versile with many different kinds of deployment
+                // zones. Adding a factory for this would be good.
+                deploymentZone = new Plateau();
+                deploymentZoneChartCommand.SetDeploymentZoneChart(deploymentZone);
+                // Set the size of the new deployment zone based on the provided command input.
                 deploymentZoneChartCommand.Execute();
+
                 Console.WriteLine("Deployment zone initialized successfully.");
             } while (deploymentZone == null);
 
@@ -56,12 +71,13 @@ namespace Ibarra.MarsRover {
             var mcc = new MissionControlCenter(deploymentZone);
             Console.WriteLine("MCC Online.");
 
-            // Must deploy at least one rover before providing any other commands.
+            // Must deploy at least one explorer before providing any other commands.
             do {
                 Console.WriteLine("Enter deployment coordinates and heading of exploration module:  ");
                 consoleInput = Console.ReadLine()?.Trim();
 
                 var launchRoverCommand = commandParser.ParseCommandBlock(consoleInput);
+                // Cannot have empty input at this point.
                 if (launchRoverCommand == null) {
                     continue;
                 }
@@ -72,6 +88,7 @@ namespace Ibarra.MarsRover {
                     continue;
                 }
 
+                // Execute the single explorer creation command.
                 var commandList = explorerCommands.ToList();
                 mcc.SetCommands(commandList);
                 mcc.ExecuteAll();
@@ -86,6 +103,7 @@ namespace Ibarra.MarsRover {
 
                 var nextCommand = commandParser.ParseCommandBlock(consoleInput);
                 var commandList = nextCommand.ToList();
+                // User is requesting report due to blank input being provided.
                 if (commandList.Contains(null)) {
                     break;
                 }
@@ -94,32 +112,12 @@ namespace Ibarra.MarsRover {
                 mcc.ExecuteAll();
             } while (true);
 
+            // TODO: Add in report generation capability at any point, not just at the end.
+
             Console.WriteLine("Composing exploration report...");
-            Console.WriteLine(ComposeControlCenterReports(mcc));
+            Console.WriteLine(mcc.Explorers.GenerateExplorationReport());
             Console.WriteLine("Press any key to exit...");
             Console.ReadLine();
-        }
-
-        private static void FileCommandLineInput() {
-        }
-
-        private static void OutputHelpInformation() {
-        }
-
-        private static bool IsHelpCommandInput(string token) {
-            return token.Equals("--?") || token.Equals("-?") || token.Equals("?") || token.Equals("--help") ||
-                   token.Equals("-help") || token.Equals("help") || token.Equals("--h") || token.Equals("-h") ||
-                   token.Equals("h");
-        }
-
-        private static string ComposeControlCenterReports(IControlCenter controlCenter) {
-            var reports = new StringBuilder();
-            foreach (var explorer in controlCenter.Explorers) {
-                reports.AppendFormat("{0} {1} {2}", explorer.Position.X, explorer.Position.Y,
-                    explorer.Heading.GetString());
-            }
-
-            return reports.ToString();
         }
     }
 }

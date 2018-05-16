@@ -6,13 +6,18 @@ using Ibarra.MarsRover.ExplorationVehicles;
 using Ibarra.MarsRover.Landscapes;
 
 namespace Ibarra.MarsRover.CommandControl {
+    /// <inheritdoc />
     public class MissionControlCenter : IControlCenter {
         private IEnumerable<IExplorerCommand> _commandList;
         private readonly IDictionary<CommandChainType, Action<IExplorerCommand>> _setCommandChainExecutors;
 
-        public MissionControlCenter(IDeploymentZoneChart landingZone) {
-            DeploymentDestination = landingZone;
-            Explorers = new ExplorationUnit(landingZone);
+        /// <summary>
+        /// Create the mission control center (MCC) that is responsible for the provided deployment zone.
+        /// </summary>
+        /// <param name="deploymentZone">The zone that this MCC is responsible for exploring with its exploration crew.</param>
+        public MissionControlCenter(IDeploymentZoneChart deploymentZone) {
+            DeploymentDestination = deploymentZone;
+            Explorers = new ExplorationTeam(deploymentZone);
             _setCommandChainExecutors = new Dictionary<CommandChainType, Action<IExplorerCommand>> {
                 {
                     CommandChainType.InitializeDeploymentZone, (command) => {
@@ -22,7 +27,7 @@ namespace Ibarra.MarsRover.CommandControl {
                 }, {
                     CommandChainType.DeployExplorer, (command) => {
                         var deployExplorerCommand = (DeployExplorerCommand) command;
-                        var rover = new Rover(DeploymentDestination, Explorers);
+                        var rover = new Rover(Explorers);
                         deployExplorerCommand.SetExplorer(rover);
                         Explorers.Add(rover);
                     }
@@ -35,13 +40,21 @@ namespace Ibarra.MarsRover.CommandControl {
             };
         }
 
+        /// <inheritdoc />
         public IDeploymentZoneChart DeploymentDestination { get; }
-        public ExplorationUnit Explorers { get; }
 
+        /// <inheritdoc />
+        public ExplorationTeam Explorers { get; }
+
+        /// <summary>
+        /// Set the commands that are to be executed by the most recently deployed explorer.
+        /// </summary>
+        /// <param name="commandList">The list of commands to be executed by the most recently deployed explorer.</param>
         public void SetCommands(IEnumerable<IExplorerCommand> commandList) {
             _commandList = commandList;
         }
 
+        /// <inheritdoc />
         public void ExecuteAll() {
             foreach (var command in _commandList) {
                 if (command == null) {

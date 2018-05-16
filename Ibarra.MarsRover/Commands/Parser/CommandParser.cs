@@ -4,9 +4,13 @@ using System.Linq;
 using Ibarra.MarsRover.Navigation;
 
 namespace Ibarra.MarsRover.Commands.Parser {
+    /// <inheritdoc />
     public class CommandParser : ICommandParser {
         private readonly IDictionary<CommandChainType, Func<string, IExplorerCommand>> _commandChainDictionary;
 
+        /// <summary>
+        /// Constructs the command parser.
+        /// </summary>
         public CommandParser() {
             _commandChainDictionary = new Dictionary<CommandChainType, Func<string, IExplorerCommand>> {
                 {
@@ -36,6 +40,8 @@ namespace Ibarra.MarsRover.Commands.Parser {
             };
         }
 
+
+        /// <inheritdoc />
         public IEnumerable<IExplorerCommand> ParseCommandBlock(string commandBlock) {
             var commandChains = commandBlock.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
             return commandChains.Select((commandChain) => {

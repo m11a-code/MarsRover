@@ -1,12 +1,18 @@
 ﻿using System.ComponentModel;
 
 namespace Ibarra.MarsRover.Navigation {
+    /// <summary>
+    /// The type of movements explorers can perform while deployed.
+    /// </summary>
     public enum Movement {
         Left,
         Right,
         Forward
     }
 
+    /// <summary>
+    /// Support methods for the <c>Movement</c> enum.
+    /// </summary>
     public static class MovementMethods {
         public static string GetString(this Movement rotation) {
             switch (rotation) {

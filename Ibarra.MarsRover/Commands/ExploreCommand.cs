@@ -14,12 +14,9 @@ namespace Ibarra.MarsRover.Commands {
         private IList<Movement> Movements { get; }
         public CommandChainType CommandChainType => CommandChainType.Explore;
 
-        public void SetExplorer(Explorer explorer) {
-            _explorer = explorer;
-        }
+        public void SetExplorer(Explorer explorer) => _explorer = explorer;
 
-        public void Execute() {
-            _explorer.Move(Movements);
-        }
+        /// <inheritdoc />
+        public void Execute() => _explorer.Move(Movements);
     }
 }

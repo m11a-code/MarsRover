@@ -2,8 +2,12 @@
 
 namespace Ibarra.MarsRover.Landscapes {
     public class Plateau : IDeploymentZoneChart {
-        public Plateau(Size size) => Size = size;
+        /// <summary>
+        /// The size of the plateau.
+        /// </summary>
         public Size Size { get; set; }
+
+        /// <inheritdoc />
         public bool IsValid(Position position) => Size.Width > position.X && Size.Height > position.Y;
     }
 }

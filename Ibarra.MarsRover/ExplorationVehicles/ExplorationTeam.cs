@@ -30,6 +30,7 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
             foreach (var explorer in this) {
                 reports.AppendFormat("{0} {1} {2}", explorer.Position.X, explorer.Position.Y,
                     explorer.Heading.GetString());
+                reports.AppendLine();
             }
 
             return reports.ToString();

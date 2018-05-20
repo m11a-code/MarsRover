@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Ibarra.MarsRover.Landscapes;
 using Ibarra.MarsRover.Navigation;
@@ -16,10 +17,13 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         /// <summary>
         /// Constructs an exploration team responsible for the provided region.
         /// </summary>
-        /// <param name="deploymentZoneChart">The region/zone that this exploration crew is responsible for exploring.</param>
-        public ExplorationTeam(IDeploymentZoneChart deploymentZoneChart) {
-            DeploymentZoneChart = deploymentZoneChart;
-        }
+        /// <param name="deploymentZoneChart">The region/zone that this exploration crew is responsible for exploring.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown if deployment zone chart is null.</exception>
+        public ExplorationTeam(IDeploymentZoneChart deploymentZoneChart)
+            => DeploymentZoneChart = deploymentZoneChart ??
+                                     throw new ArgumentNullException(nameof(deploymentZoneChart),
+                                         "Deployment zone chart cannot be null.");
 
         /// <summary>
         /// Generates a report of all explorers currently deployed and their current locations.
@@ -28,8 +32,13 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         public string GenerateExplorationReport() {
             var reports = new StringBuilder();
             foreach (var explorer in this) {
-                reports.AppendFormat("{0} {1} {2}", explorer.Position.X, explorer.Position.Y,
-                    explorer.Heading.GetString());
+                if (!explorer.IsLaunched) {
+                    reports.Append("Explorer not launched.");
+                } else {
+                    reports.AppendFormat("{0} {1} {2}", explorer.Position.X, explorer.Position.Y,
+                        explorer.Heading.GetString());
+                }
+
                 reports.AppendLine();
             }
 

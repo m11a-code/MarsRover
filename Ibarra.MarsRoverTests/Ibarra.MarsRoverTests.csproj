@@ -61,9 +61,12 @@
     <Compile Include="Commands\DeploymentZoneChartCommandTests.cs" />
     <Compile Include="Commands\ExploreCommandTests.cs" />
     <Compile Include="Commands\Parser\CommandParserTests.cs" />
+    <Compile Include="ExplorationVehicles\ExplorationTeamTests.cs" />
     <Compile Include="ExplorationVehicles\ExplorerTests.cs" />
     <Compile Include="ExplorationVehicles\RoverTests.cs" />
+    <Compile Include="Landscapes\PlateauTests.cs" />
     <Compile Include="Navigation\PositionTests.cs" />
+    <Compile Include="Navigation\SizeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,17 +4,17 @@ namespace Ibarra.MarsRover.Navigation {
     /// <summary>
     /// Simple struct for the size of a deployment zone.
     /// </summary>
-    public struct Size {
+    public class Size {
         public int Width { get; }
         public int Height { get; }
 
         public Size(int width, int height) {
             if (!ValidateWidth(width)) {
-                throw new ArgumentOutOfRangeException($"X value '{width}' cannot be negative.");
+                throw new ArgumentOutOfRangeException($"X value '{width}' cannot be less than or equal to zero.");
             }
 
             if (!ValidateHeight(height)) {
-                throw new ArgumentOutOfRangeException($"Y value '{height}' cannot be negative.");
+                throw new ArgumentOutOfRangeException($"Y value '{height}' cannot be less than or equal to zero.");
             }
 
             Width = width;

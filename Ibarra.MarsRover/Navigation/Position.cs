@@ -24,5 +24,9 @@ namespace Ibarra.MarsRover.Navigation {
         private static bool ValidateX(int x) => x >= 0;
 
         private static bool ValidateY(int y) => y >= 0;
+
+        public override string ToString() {
+            return "[Position: (X: " + X + ", Y: " + Y + ")]";
+        }
     }
 }

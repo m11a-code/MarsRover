@@ -1,4 +1,6 @@
-﻿using Ibarra.MarsRover.ExplorationVehicles;
+﻿using System;
+using Ibarra.MarsRover.Exceptions;
+using Ibarra.MarsRover.ExplorationVehicles;
 using Ibarra.MarsRover.Navigation;
 
 namespace Ibarra.MarsRover.Commands {
@@ -13,15 +15,31 @@ namespace Ibarra.MarsRover.Commands {
         public readonly Heading Heading;
 
         public DeployExplorerCommand(Position position, Heading heading) {
-            Position = position;
+            Position = position ?? throw new ArgumentNullException(nameof(position),
+                           "Provided position cannot be null.");
             Heading = heading;
         }
 
-        public void SetExplorer(Explorer explorer) => AssociatedExplorer = explorer;
+        public void SetExplorer(Explorer explorer) {
+            AssociatedExplorer =
+                explorer ?? throw new ArgumentNullException(nameof(explorer), "Explorer cannot be null.");
+        }
 
         /// <inheritdoc />
-        public void Execute() {
-            AssociatedExplorer.Launch(Position, Heading);
+        public bool Execute() {
+            if (AssociatedExplorer == null) {
+                return false;
+            }
+
+            try {
+                AssociatedExplorer.Launch(Position, Heading);
+            } catch (InvalidPositionException positionException) {
+                Console.WriteLine("The provided position " + Position + " was invalid. Please provide another " +
+                                  "position. Exception message: " + positionException.Message, positionException);
+                return false;
+            }
+
+            return true;
         }
     }
 }

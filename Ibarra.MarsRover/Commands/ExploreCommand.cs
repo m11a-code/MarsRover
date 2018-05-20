@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Ibarra.MarsRover.ExplorationVehicles;
 using Ibarra.MarsRover.Navigation;
 
@@ -8,7 +9,9 @@ namespace Ibarra.MarsRover.Commands {
         private Explorer _explorer;
 
         public ExploreCommand(IList<Movement> movements) {
-            Movements = movements;
+            Movements = movements ??
+                        throw new ArgumentNullException(nameof(movements),
+                            "List of movements cannot be null.");
         }
 
         private IList<Movement> Movements { get; }
@@ -17,6 +20,12 @@ namespace Ibarra.MarsRover.Commands {
         public void SetExplorer(Explorer explorer) => _explorer = explorer;
 
         /// <inheritdoc />
-        public void Execute() => _explorer.Move(Movements);
+        public bool Execute() {
+            if (_explorer == null) {
+                return false;
+            }
+            _explorer.Move(Movements);
+            return true;
+        }
     }
 }

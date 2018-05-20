@@ -42,16 +42,23 @@ namespace Ibarra.MarsRover.Commands.Parser {
 
 
         /// <inheritdoc />
+        /// <returns>List of parsed commands or null if an exception occurs.</returns>
         public IEnumerable<IExplorerCommand> ParseCommandBlock(string commandBlock) {
             var commandChains = commandBlock.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-            return commandChains.Select((commandChain) => {
+            return commandChains.Select(commandChain => {
                 if (commandChain == "") {
                     return null;
                 }
 
-                var type = CommandChainTypeMethods.CommandChainTypeActions.First(
-                    commandChainRegex => commandChainRegex.Key.IsMatch(commandChain));
-                return _commandChainDictionary[type.Value].Invoke(commandChain);
+                try {
+                    var type = CommandChainTypeMethods.CommandChainTypeActions.First(
+                        commandChainRegex => commandChainRegex.Key.IsMatch(commandChain));
+                    return _commandChainDictionary[type.Value].Invoke(commandChain);
+                } catch (InvalidOperationException exception) {
+                    Console.WriteLine("The command input provided doesn't match any expected command input.",
+                        exception);
+                    return null;
+                }
             }).ToList();
         }
     }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Ibarra.MarsRover.CommandControl;
 using Ibarra.MarsRover.Commands;
 using Ibarra.MarsRover.Commands.Parser;
+using Ibarra.MarsRover.ExplorationVehicles;
 using Ibarra.MarsRover.Landscapes;
 using Ibarra.MarsRover.Navigation;
 
@@ -15,17 +17,17 @@ namespace Ibarra.MarsRover {
                 // TODO: Add text file input and help menu output.
                 case 0:
                     while (true) {
-                        try {
-                            DirectCommandLineInput();
-                            break;
-                        } catch (Exception e) {
-                            Console.WriteLine(e);
-                            Console.WriteLine("Exception occurred. \'Rebooting\' command module...");
-                            Console.WriteLine("...");
-                            Console.WriteLine("...");
-                            Console.WriteLine("...");
-                            Console.WriteLine("Reboot complete!");
-                        }
+                        //try {
+                        DirectCommandLineInput();
+                        break;
+                        //} catch (Exception e) {
+                        //    Console.WriteLine(e);
+                        //    Console.WriteLine("Exception occurred. \'Rebooting\' command module...");
+                        //    Console.WriteLine("...");
+                        //    Console.WriteLine("...");
+                        //    Console.WriteLine("...");
+                        //    Console.WriteLine("Reboot complete!");
+                        //}
                     }
 
                     break;
@@ -46,13 +48,8 @@ namespace Ibarra.MarsRover {
                 Console.WriteLine("Enter the size of the deployment zone for your spacecraft:  ");
                 consoleInput = Console.ReadLine();
                 var deploymentZoneCommand = commandParser.ParseCommandBlock(consoleInput);
-                if (deploymentZoneCommand == null) {
-                    continue;
-                }
-
-                var explorerCommands = deploymentZoneCommand.ToList();
-                var command = explorerCommands.First();
-                if (!(command is DeploymentZoneChartCommand deploymentZoneChartCommand)) {
+                if (deploymentZoneCommand == null || !(deploymentZoneCommand.ToList().First()
+                        is DeploymentZoneChartCommand deploymentZoneChartCommand)) {
                     continue;
                 }
 
@@ -71,29 +68,26 @@ namespace Ibarra.MarsRover {
             var mcc = new MissionControlCenter(deploymentZone);
             Console.WriteLine("MCC Online.");
 
-            // Must deploy at least one explorer before providing any other commands.
+            // Must deploy at least one explorer successfully before providing any other commands.
+            Explorer explorer = new Rover(mcc.Explorers);
             do {
                 Console.WriteLine("Enter deployment coordinates and heading of exploration module:  ");
                 consoleInput = Console.ReadLine()?.Trim();
 
                 var launchRoverCommand = commandParser.ParseCommandBlock(consoleInput);
                 // Cannot have empty input at this point.
-                if (launchRoverCommand == null) {
-                    continue;
-                }
-
-                var explorerCommands = launchRoverCommand.ToList();
-                var command = explorerCommands.First();
-                if (!(command is DeployExplorerCommand)) {
+                if (launchRoverCommand == null ||
+                    !(launchRoverCommand.ToList().First() is DeployExplorerCommand launchCommand)) {
                     continue;
                 }
 
                 // Execute the single explorer creation command.
-                var commandList = explorerCommands.ToList();
-                mcc.SetCommands(commandList);
-                mcc.ExecuteAll();
-                break;
-            } while (true);
+                launchCommand.SetExplorer(explorer);
+
+                if (launchCommand.Execute()) {
+                    mcc.Explorers.Add(explorer);
+                }
+            } while (!mcc.HasDeployedAnExplorer());
 
             do {
                 Console.WriteLine(

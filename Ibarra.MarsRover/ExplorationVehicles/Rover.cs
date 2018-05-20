@@ -1,5 +1,4 @@
-﻿using Ibarra.MarsRover.Landscapes;
-using Ibarra.MarsRover.Navigation;
+﻿using Ibarra.MarsRover.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +18,15 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         }
 
         /// <inheritdoc />
-        protected override bool IsPositionValid(Position position) =>
-            position.X > -1 && position.Y > -1 &&
-            position.X <= DeploymentZoneChart.Size.Width &&
-            position.Y <= DeploymentZoneChart.Size.Height;
+        protected override bool IsPositionValid(Position position)
+            => position.X > -1 && position.Y > -1 &&
+               DeploymentZoneChart.IsPositionWithinBounds(position);
 
         /// <inheritdoc />
         protected override bool ExplorerExistsAtPosition(Position position) {
-            return ExplorationUnit.ToList().FindIndex(explorer =>
-                       explorer != this && explorer.Position.X == position.X && explorer.Position.Y == position.Y) !=
-                   -1;
+            return ExplorationUnit.ToList().FindIndex(explorer
+                       => explorer != this && explorer.Position.X == position.X
+                                           && explorer.Position.Y == position.Y) != -1;
         }
 
         /// <summary>
@@ -56,10 +54,47 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
                 {Heading.West, () => Heading = Heading.North}
             };
             _roverMoveForwardActions = new Dictionary<Heading, Action> {
-                {Heading.North, () => Position = new Position(Position.X, Position.Y + 1)},
-                {Heading.South, () => Position = new Position(Position.X, Position.Y - 1)},
-                {Heading.East, () => Position = new Position(Position.X + 1, Position.Y)},
-                {Heading.West, () => Position = new Position(Position.X - 1, Position.Y)}
+                {
+                    Heading.North, () => {
+                        var nextPosition = new Position(Position.X, Position.Y + 1);
+                        if (IsPositionAvailable(nextPosition)) {
+                            Position = nextPosition;
+                        } else {
+                            Console.WriteLine("The position " + nextPosition + " is not avaiable. " +
+                                              "Skipping movement action.");
+                        }
+                    }
+                }, {
+                    Heading.South, () => {
+                        var nextPosition = new Position(Position.X, Position.Y - 1);
+                        if (IsPositionAvailable(nextPosition)) {
+                            Position = nextPosition;
+                        } else {
+                            Console.WriteLine("The position " + nextPosition + " is not avaiable. " +
+                                              "Skipping movement action.");
+                        }
+                    }
+                }, {
+                    Heading.East, () => {
+                        var nextPosition = new Position(Position.X + 1, Position.Y);
+                        if (IsPositionAvailable(nextPosition)) {
+                            Position = nextPosition;
+                        } else {
+                            Console.WriteLine("The position " + nextPosition + " is not avaiable. " +
+                                              "Skipping movement action.");
+                        }
+                    }
+                }, {
+                    Heading.West, () => {
+                        var nextPosition = new Position(Position.X - 1, Position.Y);
+                        if (IsPositionAvailable(nextPosition)) {
+                            Position = nextPosition;
+                        } else {
+                            Console.WriteLine("The position " + nextPosition + " is not avaiable. " +
+                                              "Skipping movement action.");
+                        }
+                    }
+                }
             };
         }
     }

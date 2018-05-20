@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Ibarra.MarsRover.Exceptions;
 using Ibarra.MarsRover.Landscapes;
 using Ibarra.MarsRover.Navigation;
@@ -15,8 +16,8 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         /// </summary>
         /// <param name="crew">The team of explorers this explorer will belong to.</param>
         protected Explorer(ExplorationTeam crew) {
+            ExplorationUnit = crew ?? throw new ArgumentNullException(nameof(crew), "Exploration unit cannot be null.");
             DeploymentZoneChart = crew.DeploymentZoneChart;
-            ExplorationUnit = crew;
         }
 
         /// <summary>
@@ -64,6 +65,8 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
             Heading = heading;
         }
 
+        public bool IsLaunched => Position != null;
+
         /// <summary>
         /// Checks whether the provided position is available (i.e., unoccupied and exists within the region bounds).
         /// </summary>
@@ -72,6 +75,7 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         /// </returns>
         /// <param name="nextPosition">The position to test for availability.</param>
         public bool IsPositionAvailable(Position nextPosition) =>
+            nextPosition != null &&
             IsPositionValid(nextPosition) && !ExplorerExistsAtPosition(nextPosition);
 
         /// <summary>
@@ -86,7 +90,6 @@ namespace Ibarra.MarsRover.ExplorationVehicles {
         /// <summary>
         /// Check if an <c>Explorer</c> exists at the given position
         /// </summary>
-        /// 
         protected abstract bool ExplorerExistsAtPosition(Position position);
     }
 }

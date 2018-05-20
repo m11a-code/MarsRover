@@ -4,17 +4,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Ibarra.MarsRoverTests.Navigation {
     [TestClass]
-    public class PositionTests {
+    public class SizeTests {
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void PositionTest_InvalidX() {
-            var position = new Position(-1, 5);
+        public void SizeTest_InvalidWidth() {
+            var size = new Size(0, 5);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void PositionTest_InvalidY() {
-            var position = new Position(5, -2);
+        public void SizeTest_InvalidHeight() {
+            var size = new Size(5, -1);
         }
     }
 }

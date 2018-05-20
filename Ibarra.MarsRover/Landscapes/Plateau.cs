@@ -8,6 +8,7 @@ namespace Ibarra.MarsRover.Landscapes {
         public Size Size { get; set; }
 
         /// <inheritdoc />
-        public bool IsValid(Position position) => Size.Width > position.X && Size.Height > position.Y;
+        public bool IsPositionWithinBounds(Position position) =>
+            Size.Width >= position.X && Size.Height >= position.Y;
     }
 }

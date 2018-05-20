@@ -11,6 +11,6 @@ namespace Ibarra.MarsRover.Landscapes {
         /// </summary>
         /// <param name="position">The position to test for validity.</param>
         /// <returns>True if the position is valid.</returns>
-        bool IsValid(Position position);
+        bool IsPositionWithinBounds(Position position);
     }
 }

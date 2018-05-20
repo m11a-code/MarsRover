@@ -8,6 +8,7 @@
         /// <summary>
         /// The command to be executed.
         /// </summary>
-        void Execute();
+        /// <returns>true is successful.</returns>
+        bool Execute();
     }
 }
